@@ -1,0 +1,304 @@
+﻿<UserControl x:Class="FocusLock.Controls.Sidebar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FocusLock"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Border BorderBrush="#FFFF" BorderThickness="1" CornerRadius="0" Background="#D9F8F1">
+            <StackPanel Background="#FFFF" Grid.Column="0">
+                <Button Command="{Binding SwitchToDashboardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    CornerRadius="10"
+                                    Padding="10"
+                                    Cursor="Hand">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Viewbox Width="40" Height="40">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M3 12H15M3 6H21M3 18H21"
+                                                  Stroke="{DynamicResource TextIconBrush}"
+                                                  x:Name="dashboardPath"
+                                                  StrokeThickness="1" StrokeLineJoin="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock x:Name="dashboardText"
+                                               FontSize="12"
+                                               Text="Dashboard"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextIconBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="dashboardPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="dashboardPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="dashboardText" Property="FontWeight" Value="ExtraBold"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding CurrentPageName,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Dashboard">
+                                    <Setter TargetName="dashboardPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="dashboardPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="dashboardText" Property="FontWeight" Value="ExtraBold"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Command="{Binding SwitchToTasksCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    CornerRadius="10"
+                                    Padding="10"
+                                    Cursor="Hand">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Viewbox Width="40" Height="40">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M12.0004 15L12.0004 
+                                                  22M8.00043 7.30813V9.43875C8.00043 9.64677 
+                                                  8.00043 9.75078 7.98001 9.85026C7.9619 9.93852 7.93194 10.0239 7.89095 
+                                                  10.1042C7.84474 10.1946 7.77977 10.2758 7.64982 10.4383L6.08004 12.4005C5.4143 
+                                                  13.2327 5.08143 13.6487 5.08106 13.9989C5.08073 14.3035 5.21919 14.5916 5.4572 
+                                                  14.7815C5.73088 15 6.26373 15 7.32943 15H16.6714C17.7371 15 18.27 15 18.5437 
+                                                  14.7815C18.7817 14.5916 18.9201 14.3035 18.9198 13.9989C18.9194 13.6487 18.5866 
+                                                  13.2327 17.9208 12.4005L16.351 10.4383C16.2211 10.2758 16.1561 10.1946 16.1099 
+                                                  10.1042C16.0689 10.0239 16.039 9.93852 16.0208 9.85026C16.0004 9.75078 16.0004 
+                                                  9.64677 16.0004 9.43875V7.30813C16.0004 7.19301 16.0004 7.13544 16.0069 
+                                                  7.07868C16.0127 7.02825 16.0223 6.97833 16.0357 6.92937C16.0507 6.87424 16.0721 6.8208 
+                                                  16.1149 6.71391L17.1227 4.19423C17.4168 3.45914 17.5638 3.09159 17.5025 2.79655C17.4489 
+                                                  2.53853 17.2956 2.31211 17.0759 2.1665C16.8247 2 16.4289 2 15.6372 2H8.36368C7.57197 2 
+                                                  7.17611 2 6.92494 2.1665C6.70529 2.31211 6.55199 2.53853 6.49838 2.79655C6.43707 3.09159 
+                                                  6.58408 3.45914 6.87812 4.19423L7.88599 6.71391C7.92875 6.8208 7.95013 6.87424 7.96517 
+                                                  6.92937C7.97853 6.97833 7.98814 7.02825 7.99392 7.07868C8.00043 7.13544 8.00043 7.19301 
+                                                  8.00043 7.30813Z" 
+                                                  Stroke="{DynamicResource TextIconBrush}" 
+                                                  x:Name="tasksPath"
+                                                  StrokeThickness="1" 
+                                                  StrokeLineJoin="Round"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock x:Name="tasksText"
+                                               FontSize="12"
+                                               Text="Tasks"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextIconBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="tasksPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="tasksPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="tasksText" Property="FontWeight" Value="ExtraBold"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding CurrentPageName,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Tasks">
+                                    <Setter TargetName="tasksPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="tasksPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="tasksText" Property="FontWeight" Value="ExtraBold"/>
+                                </DataTrigger>
+
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Command="{Binding SwitchToFocusCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Tag="{Binding IsFocusActive}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                      Background="Transparent"
+                                      BorderBrush="Transparent"
+                                      CornerRadius="10"
+                                      Padding="10"
+                                      Cursor="Hand">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Viewbox Width="40" Height="40">
+                                        <Canvas Width="24" Height="24">
+                                            <Path x:Name="focusPath"
+                                                  Data="M2.42,12.71 C2.28,12.5 2.21,12.38 2.17,12.22 
+                                                  C2.14,12.09 2.14,11.9 2.17,11.77 C2.21,11.61 2.28,11.5 
+                                                  2.42,11.29 C3.54,9.5 6.89,5 12,5 C17.1,5 20.45,9.5 21.58,
+                                                  11.29 C21.71,11.5 21.78,11.61 21.82,11.77 C21.85,11.9 
+                                                  21.85,12.09 21.82,12.22 C21.78,12.38 21.71,12.5 21.58,12.71 
+                                                  C20.45,14.5 17.1,19 12,19 C6.89,19 3.54,14.5 2.42,12.71 Z"
+                                                  Stroke="{DynamicResource TextIconBrush}"
+                                                  StrokeThickness="1"
+                                                  StrokeLineJoin="Round"/>
+                                            <Ellipse x:Name="focusDot"
+                                                     Width="6" Height="6" Canvas.Left="9" Canvas.Top="9"
+                                                     Stroke="{DynamicResource TextIconBrush}"
+                                                     StrokeThickness="1"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock x:Name="focusText"
+                                               FontSize="12"
+                                               Text="Focus"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextIconBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="focusPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="focusPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusDot" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="focusDot" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusText" Property="FontWeight" Value="ExtraBold"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding CurrentPageName,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Focus">
+                                    <Setter TargetName="focusPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="focusPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusDot" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="focusDot" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusText" Property="FontWeight" Value="ExtraBold"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FocusActive,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                    <Setter TargetName="focusPath" Property="Stroke" Value="{StaticResource PastelDarkRedBrush}"/>
+                                    <Setter TargetName="focusPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusDot" Property="Stroke" Value="{StaticResource PastelDarkRedBrush}"/>
+                                    <Setter TargetName="focusDot" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="focusText" Property="Foreground" Value="{StaticResource PastelDarkRedBrush}"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Command="{Binding SwitchToDistractionsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    CornerRadius="10"
+                                    Padding="10"
+                                    Cursor="Hand">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Viewbox Width="40" Height="40">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Fill="Transparent" 
+                                                  Stroke="{DynamicResource TextIconBrush}" 
+                                                  x:Name="distractionPath"
+                                                  StrokeThickness="1" 
+                                                  StrokeLineJoin="Round"
+                                                  Data="M18.9998 17.5V6.5C19.0627 5.37366 18.6774 4.2682 17.9279 3.42505C17.1784 2.5819 16.1258 2.06958 14.9998 2H8.99981C7.87387 2.06958 6.82121 2.5819 6.07175 3.42505C5.32228 4.2682 4.9369 5.37366 4.99982 6.5V17.5C4.9369 18.6263 5.32228 19.7317 6.07175 20.5748C6.82121 21.418 7.87387 21.9303 8.99981 21.9999H14.9998C16.1258 21.9303 17.1784 21.418 17.9279 20.5748C18.6774 19.7317 19.0627 18.6263 18.9998 17.5Z"/>
+                                            <Path Fill="Transparent" 
+                                                  x:Name="distractionDash"
+                                                  Stroke="{DynamicResource TextIconBrush}" 
+                                                  StrokeThickness="1" 
+                                                  StrokeLineJoin="Round"
+                                                  Data="M14,5H10"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock x:Name="distractionText"
+                                               FontSize="12"
+                                               Text="Distractions"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextIconBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="distractionPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="distractionPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="distractionDash" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="distractionDash" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="distractionText" Property="FontWeight" Value="ExtraBold"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding CurrentPageName,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Distractions">
+                                    <Setter TargetName="distractionPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="distractionPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="distractionDash" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="distractionDash" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="distractionText" Property="FontWeight" Value="ExtraBold"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Command="{Binding SwitchToSettingsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    CornerRadius="10"
+                                    Padding="10"
+                                    Cursor="Hand">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                    <Viewbox Width="40" Height="40">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Data="M9.28957 19.3711L9.87402 20.6856C10.0478 21.0768 10.3313 21.4093 10.6902 21.6426C11.0492 21.8759 
+                                                  11.4681 22.0001 11.8962 22C12.3244 22.0001 12.7433 21.8759 13.1022 21.6426C13.4612 21.4093 
+                                                  13.7447 21.0768 13.9185 20.6856L14.5029 19.3711C14.711 18.9047 15.0609 18.5159 15.5029 18.26C15.9477 
+                                                  18.0034 16.4622 17.8941 16.9729 17.9478L18.4029 18.1C18.8286 18.145 19.2582 
+                                                  18.0656 19.6396 17.8713C20.021 17.6771 20.3379 17.3763 20.5518 17.0056C20.766 
+                                                  16.635 20.868 16.2103 20.8455 15.7829C20.823 15.3555 20.677 14.9438 20.4251 14.5978L19.5785 13.4344C19.277 13.0171 
+                                                  19.1159 12.5148 19.1185 12C19.1184 11.4866 19.281 10.9864 19.5829 10.5711L20.4296 9.40778C20.6814 
+                                                  9.06175 20.8275 8.65007 20.85 8.22267C20.8725 7.79528 
+                                                  20.7704 7.37054 20.5562 7C20.3423 6.62923 20.0255 6.32849 19.644 6.13423C19.2626 5.93997 
+                                                  18.833 5.86053 18.4074 5.90556L16.9774 6.05778C16.4667 6.11141 15.9521 6.00212 15.5074 
+                                                  5.74556C15.0645 5.48825 14.7144 5.09736 14.5074 4.62889L13.9185 3.31444C13.7447 2.92317 
+                                                  13.4612 2.59072 13.1022 2.3574C12.7433 2.12408 12.3244 1.99993 11.8962 2C11.4681 1.99993 
+                                                  11.0492 2.12408 10.6902 2.3574C10.3313 2.59072 10.0478 2.92317 9.87402 3.31444L9.28957 
+                                                  4.62889C9.0825 5.09736 8.73245 5.48825 8.28957 5.74556C7.84479 6.00212 7.33024 6.11141 6.81957 
+                                                  6.05778L5.38513 5.90556C4.95946 5.86053 4.52987 5.93997 4.14844 6.13423C3.76702 6.32849 3.45014 
+                                                  6.62923 3.23624 7C3.02206 7.37054 2.92002 7.79528 2.94251 8.22267C2.96499 8.65007 3.11103 9.06175 
+                                                  3.36291 9.40778L4.20957 10.5711C4.51151 10.9864 4.67411 11.4866 4.67402 12C4.67411 12.5134 4.51151 
+                                                  13.0137 4.20957 13.4289L3.36291 14.5922C3.11103 14.9382 2.96499 15.3499 2.94251 15.7773C2.92002 
+                                                  16.2047 3.02206 16.6295 3.23624 17C3.45036 17.3706 3.76727 17.6712 4.14864 17.8654C4.53001 18.0596 
+                                                  4.95949 18.1392 5.38513 18.0944L6.81513 17.9422C7.3258 17.8886 7.84034 17.9979 8.28513 
+                                                  18.2544C8.72966 18.511 9.08134 18.902 9.28957 19.3711Z" 
+                                                  Stroke="{DynamicResource TextIconBrush}" 
+                                                  x:Name="settingsPath"
+                                                  StrokeThickness="1" 
+                                                  StrokeLineJoin="Round"/>
+                                            <Ellipse Width="6" Height="6" Canvas.Left="9" Canvas.Top="9" 
+                                                     Stroke="{DynamicResource TextIconBrush}" 
+                                                     x:Name="settingsEllipse"
+                                                     StrokeThickness="1"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock x:Name="settingsText"
+                                               FontSize="12"
+                                               Text="Settings"
+                                               HorizontalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource TextIconBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="settingsPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="settingsPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="settingsEllipse" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="settingsEllipse" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="settingsText" Property="FontWeight" Value="ExtraBold"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding CurrentPageName,RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Settings">
+                                    <Setter TargetName="settingsPath" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="settingsPath" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="settingsEllipse" Property="Stroke" Value="{StaticResource PastelDarkBlueBrush}"/>
+                                    <Setter TargetName="settingsEllipse" Property="StrokeThickness" Value="2"/>
+                                    <Setter TargetName="settingsText" Property="FontWeight" Value="ExtraBold"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

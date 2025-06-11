@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="FocusLock.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:FocusLock.Views"
+             xmlns:viewModels="clr-namespace:FocusLock.ViewModels"
+             Background="#F8F8F8">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Dashboard" FontSize="32" FontWeight="Bold" Foreground="#333" Margin="0 0 0 20"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0 0 20 0" VerticalAlignment="Top">
+                <Border Background="#E0E7FF" CornerRadius="16" Padding="20" >
+                    <StackPanel>
+                        <TextBlock Text="Today's Summary" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
+                        <TextBlock Text="Focused Time: 1h 45m"/>
+                        <TextBlock Text="Distraction Time: 30m"/>
+                        <TextBlock Text="Tasks Completed: 3 / 5"/>
+                    </StackPanel>
+                </Border>
+
+                <Button Content="Start Focus Mode" Height="50" Background="#BDE0FE" Foreground="#222"
+                        FontSize="16" FontWeight="Bold" BorderThickness="0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                <Border Background="#D0F4DE" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Upcoming Task" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
+                        <TextBlock Text="Write Capstone Report" FontSize="16"/>
+                        <TextBlock Text="Starts at: 3:00 PM" FontSize="14" Foreground="#666"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#FFD6E0" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Top Distractions" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
+                        <TextBlock Text="• Steam - 15m"/>
+                        <TextBlock Text="• Discord - 10m"/>
+                        <TextBlock Text="• Chrome - 5m"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

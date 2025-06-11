@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="FocusLock.Views.FocusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F8F8F8">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30">
+            <Button Width="220" Height="220"
+                    Click="FocusButton_Click"
+                    IsEnabled="{Binding IsTaskRunning, Converter={StaticResource InverseBoolConverter}}"
+                    BorderBrush="{Binding IsFocusActive, Converter={StaticResource FocusActiveToBorderColorConverter}}"
+                    Foreground="{DynamicResource TextIconBrush}"
+                    FontSize="25"
+                    FontWeight="Bold">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="3"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+                <Button.Background>
+                    <MultiBinding Converter="{StaticResource FocusStateToBackgroundConverter}">
+                        <Binding Path="IsFocusActive"/>
+                        <Binding Path="IsTaskRunning"/>
+                    </MultiBinding>
+                </Button.Background>
+                <Button.Content>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource FocusStateToTextConverter}">
+                                <Binding Path="IsFocusActive"/>
+                                <Binding Path="IsTaskRunning"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+
+            <TextBlock Text="*WARNING* Distractions during Focus are forced quit. Save anything before starting!"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextIconBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,10,0,0"/>
+        </StackPanel>
+        
+        <Border Grid.Row="1"
+                Background="#E3F2FD"
+                CornerRadius="12"
+                Padding="16"
+                Margin="0,0,0,20"
+                BorderBrush="#B6D9F7"
+                BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="{Binding TaskHeader}" 
+                    FontSize="14" 
+                    FontWeight="Bold" 
+                    Foreground="{Binding TaskHeaderColor}"/>
+                <TextBlock Text="{Binding UpcomingTaskTitle}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextIconBrush}"/>
+                <TextBlock Text="{Binding UpcomingTaskStartTime, Converter={StaticResource TimeSpanToAmPmConverter}}" FontSize="14" Foreground="{DynamicResource TextIconBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

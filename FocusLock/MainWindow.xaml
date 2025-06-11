@@ -1,0 +1,39 @@
+﻿<Window x:Class="FocusLock.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:FocusLock.Controls"
+        Title="FocusLock" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Border BorderBrush="#FFFF" BorderThickness="3" CornerRadius="10" Background="Transparent">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <controls:Header/>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <controls:Sidebar
+                    SwitchToDashboardCommand="{Binding SwitchToDashboardCommand}"
+                    SwitchToFocusCommand="{Binding SwitchToFocusCommand}" 
+                    SwitchToDistractionsCommand="{Binding SwitchToDistractionsCommand}" 
+                    SwitchToSettingsCommand="{Binding SwitchToSettingsCommand}" 
+                    SwitchToTasksCommand="{Binding SwitchToTasksCommand}" 
+                    CurrentPageName="{Binding CurrentPageName, Mode=OneWay}"
+                    />
+                <Grid Grid.Column="1" Background="#F8F8F8">
+                    <ContentControl Content="{Binding CurrentPage}" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

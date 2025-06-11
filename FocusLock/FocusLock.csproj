@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>TrayIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\FocusLockIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TrayIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
+    <PackageReference Include="System.Management" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\FocusLockIcon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ViewModels\SettingsViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="ViewModels\FocusViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="ViewModels\DistractionsViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="ViewModels\TasksViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="ViewModels\DashboardViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+    <Compile Update="ViewModels\BaseViewModel.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+  </ItemGroup>
+
+</Project>

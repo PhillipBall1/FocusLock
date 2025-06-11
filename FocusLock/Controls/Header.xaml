@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="FocusLock.Controls.Header"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FocusLock.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="70" d:DesignWidth="800">
+    <Grid>
+        <DockPanel Background="#FFFF" Grid.Row="0" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                <Image Source="../Assets/FocusLockIcon.png" Width="71" Height="67"/>
+                <TextBlock Text="FocusLock"
+                   Foreground="{DynamicResource TextIconBrush}"
+                   FontSize="30"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center"
+                   Margin="-10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <Button Width="46" Height="62" Click="Minimize_Click" Background="Transparent" BorderThickness="0">
+                    <Viewbox Width="30" Height="40">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M5 12H19" Stroke="{DynamicResource TextIconBrush}" StrokeThickness="2" StrokeLineJoin="Round"/>
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+                <Button Width="46" Height="62" Click="MaximizeRestore_Click" Background="Transparent" BorderThickness="0">
+                    <Viewbox Width="30" Height="62">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M7.5 3H14.6C16.8402 3 17.9603 3 18.816 
+                                      3.43597C19.5686 3.81947 20.1805 4.43139 20.564 
+                                      5.18404C21 6.03969 21 7.15979 21 9.4V16.5M6.2 
+                                      21H14.3C15.4201 21 15.9802 21 16.408 20.782C16.7843 
+                                      20.5903 17.0903 20.2843 17.282 19.908C17.5 19.4802 17.5 
+                                      18.9201 17.5 17.8V9.7C17.5 8.57989 17.5 8.01984 17.282 
+                                      7.59202C17.0903 7.21569 16.7843 6.90973 16.408 6.71799C15.9802 6.5 
+                                      15.4201 6.5 14.3 6.5H6.2C5.0799 6.5 4.51984 6.5 4.09202 6.71799C3.71569 
+                                      6.90973 3.40973 7.21569 3.21799 7.59202C3 8.01984 3 8.57989 3 9.7V17.8C3 
+                                      18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 
+                                      20.782C4.51984 21 5.0799 21 6.2 21Z" 
+                                      Stroke="{DynamicResource TextIconBrush}" StrokeThickness="2" StrokeLineJoin="Round"/>
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+                <Button Width="46" Height="62" Click="Close_Click" Background="Transparent" BorderThickness="0">
+                    <Viewbox Width="40" Height="40">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M17 7L7 17M7 7L17 17" Stroke="{DynamicResource TextIconBrush}" StrokeThickness="2" StrokeLineJoin="Round"/>
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

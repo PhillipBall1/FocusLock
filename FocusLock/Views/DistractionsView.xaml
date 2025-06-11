@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="FocusLock.Views.DistractionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:FocusLock.Models"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Select Distracting Applications"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextIconBrush}" />
+            <TextBlock Text="Start-up any application and it will show up here. Highlighted applications will close during Focus!"
+                       FontSize="14"
+                       Foreground="{DynamicResource TextIconBrush}"
+                       Margin="10,5,0,0"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="DistractionItemsControl">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="3"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:Distraction}">
+                        <Border x:Name="CardBorder"
+                                Margin="10"
+                                Padding="10"
+                                CornerRadius="10"
+                                Background="{Binding IsDistraction, Converter={StaticResource BoolToColorConverter}}"
+                                MouseLeftButtonUp="Card_Click"
+                                Cursor="Hand"
+                                Width="180" Height="150">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image Width="48" Height="48" Source="{Binding Icon}" Margin="0,0,0,10"/>
+                                <TextBlock Text="{Binding ApplicationName}" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextIconBrush}" TextAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
