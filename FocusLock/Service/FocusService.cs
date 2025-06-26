@@ -5,12 +5,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace FocusLock.Service
 {
+    /*
+     * This service manages the focus mode functionality.
+     * It tracks whether focus mode is active, records total focus time,
+     * subscribes to periodic ticks to scan for distraction processes,
+     * and attempts to gracefully close or force-kill distraction apps.
+     * Focus time is persisted to a file and can be retrieved asynchronously.
+     */
+
     public static class FocusService
     {
         private static List<Distraction> distractions;
@@ -22,19 +28,22 @@ namespace FocusLock.Service
         public static DateTime? FocusEndTime { get; private set; }
 
         public static event Action<bool> FocusModeChanged;
-        private const int WM_CLOSE = 0x0010;
 
         [DllImport("user32.dll")]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        private static readonly string FocusTimePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FocusLock", "focus_time.txt");
+        private static TimeSpan TotalFocusTime = TimeSpan.Zero;
+
         #region Timer
 
+        // Starts focus mode and begins scanning/killing distractions on periodic ticks
         public static async Task StartAsync()
         {
             if (isRunning) return;
 
             distractions = (await DistractionService.LoadDistractionsAsync())
-                .Where(distraction => distraction.IsDistraction && !string.IsNullOrWhiteSpace(distraction.RootExePath))
+                .Where(d => d.IsDistraction && !string.IsNullOrWhiteSpace(d.RootExePath))
                 .ToList();
 
             isRunning = true;
@@ -42,11 +51,14 @@ namespace FocusLock.Service
             FocusStartTime = DateTime.Now;
             FocusEndTime = null;
             FocusModeChanged?.Invoke(true);
+
             tickCallback = () => ScanAndTerminateDistractionsAsync(distractions);
             TickService.Subscribe(tickCallback);
 
+            await LoadTotalFocusTimeAsync();
         }
 
+        // Stops focus mode and saves the accumulated focus time
         public static void Stop()
         {
             if (!isRunning) return;
@@ -54,60 +66,136 @@ namespace FocusLock.Service
             isRunning = false;
             IsFocusModeActive = false;
             FocusEndTime = DateTime.Now;
+
+            if (FocusStartTime.HasValue)
+            {
+                TotalFocusTime += FocusEndTime.Value - FocusStartTime.Value;
+                _ = SaveTotalFocusTimeAsync();
+            }
+
             FocusModeChanged?.Invoke(false);
-            if(tickCallback != null) TickService.Unsubscribe(tickCallback);
+
+            if (tickCallback != null)
+                TickService.Unsubscribe(tickCallback);
         }
 
+        // Loads total focus time from persistent storage
+        public static async Task LoadTotalFocusTimeAsync()
+        {
+            Logger.Log($"[FocusService] Loading total focus time from {FocusTimePath}");
+            try
+            {
+                if (File.Exists(FocusTimePath))
+                {
+                    string content = await File.ReadAllTextAsync(FocusTimePath);
+                    if (TimeSpan.TryParse(content, out var parsed))
+                    {
+                        TotalFocusTime = parsed;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"[FocusService] Failed to load focus time: {ex.Message}");
+            }
+        }
+
+        // Saves total focus time to persistent storage
+        private static async Task SaveTotalFocusTimeAsync()
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(FocusTimePath);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                await File.WriteAllTextAsync(FocusTimePath, TotalFocusTime.ToString());
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"[FocusService] Failed to save focus time: {ex.Message}");
+            }
+        }
+
+        // Gets the total focus time asynchronously
+        public static Task<TimeSpan> GetTotalFocusTimeAsync()
+        {
+            return Task.FromResult(TotalFocusTime);
+        }
 
         #endregion
 
         #region Process Handling
 
+        // Scans distractions and attempts to close or kill their processes to maintain focus
         public static async Task ScanAndTerminateDistractionsAsync(List<Distraction> distractions)
         {
             var killedPids = new HashSet<int>();
 
-            foreach (var distraction in distractions.Where(distraction => distraction.IsDistraction))
+            foreach (var distraction in distractions.Where(d => d.IsDistraction))
             {
                 try
                 {
-                    if (distraction.RootProcessId == null && distraction.SurfaceProcessId == null) continue;
-
-
                     var processesToKill = new List<Process>();
+                    Logger.Log($"[FocusService] Checking distraction: {distraction.DisplayName}");
 
-                    if (distraction.RootProcessId != null)
+                    // Gather root process tree for killing
+                    if (distraction.RootProcessId > 0)
                     {
-                        var root = Process.GetProcessById(distraction.RootProcessId);
-                        processesToKill.AddRange(ProcessTreeHelper.GetProcessTree(root.Id));
+                        try
+                        {
+                            var root = Process.GetProcessById(distraction.RootProcessId);
+                            if (!root.HasExited)
+                            {
+                                processesToKill.AddRange(ProcessTreeHelper.GetProcessTree(root.Id));
+                                Logger.Log($"[FocusService] Deleting by Root: {distraction.DisplayName}");
+                            }
+                        }
+                        catch { }
                     }
 
-                    if (distraction.SurfaceProcessId != null &&
+                    // Also add surface process if different from root and not already handled
+                    if (distraction.SurfaceProcessId > 0 &&
                         distraction.SurfaceProcessId != distraction.RootProcessId &&
                         !killedPids.Contains(distraction.SurfaceProcessId))
                     {
-                        var surface = Process.GetProcessById(distraction.SurfaceProcessId);
-                        processesToKill.Add(surface);
+                        try
+                        {
+                            var surface = Process.GetProcessById(distraction.SurfaceProcessId);
+                            if (!surface.HasExited)
+                            {
+                                processesToKill.Add(surface);
+                                Logger.Log($"[FocusService] Deleting by Surface: {distraction.DisplayName}");
+                            }
+                        }
+                        catch { }
                     }
 
-                    foreach (var proc in processesToKill.DistinctBy(p => p.Id))
+                    // Attempt to close or kill each gathered process
+                    foreach (var proc in processesToKill)
                     {
-                        if (killedPids.Contains(proc.Id)) continue;
+                        if (killedPids.Contains(proc.Id))
+                            continue;
 
                         Logger.Log($"[FocusService] Handling process: {proc.ProcessName} ({proc.Id})");
 
+                        // Send WM_CLOSE to allow graceful shutdown
                         if (proc.MainWindowHandle != IntPtr.Zero)
                         {
-                            PostMessage(proc.MainWindowHandle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                            PostMessage(proc.MainWindowHandle, 0x0010, IntPtr.Zero, IntPtr.Zero);
                             Logger.Log($"[FocusService] Sent WM_CLOSE to {proc.ProcessName}");
                         }
 
                         await Task.Delay(250);
-
                         proc.Refresh();
-                        if (!proc.HasExited) proc.Kill();
 
-                        Logger.Log($"[FocusService] Force killed: {proc.ProcessName} ({proc.Id})");
+                        // If still running, force kill
+                        if (!proc.HasExited)
+                        {
+                            proc.Kill();
+                            Logger.Log($"[FocusService] Force killed: {proc.ProcessName} ({proc.Id})");
+                        }
+
                         killedPids.Add(proc.Id);
                     }
                 }
@@ -117,6 +205,6 @@ namespace FocusLock.Service
                 }
             }
         }
+        #endregion
     }
-    #endregion
 }

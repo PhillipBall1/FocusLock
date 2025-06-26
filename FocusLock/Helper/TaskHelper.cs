@@ -7,13 +7,21 @@ using System.Threading.Tasks;
 
 namespace FocusLock.Helper
 {
+    /*
+     * This static helper class provides async methods to get all tasks,
+     * find the currently active task based on time and completion,
+     * and find the next upcoming task that hasn’t been completed.
+     */
+
     public static class TaskHelper
     {
+        // Loads all tasks asynchronously from the TaskService
         public static async Task<List<TaskItem>> GetAllTasksAsync()
         {
             return await TaskService.LoadTasksAsync();
         }
 
+        // Returns the task that is currently active (based on current time and completion status)
         public static async Task<TaskItem> GetActiveTaskAsync()
         {
             var now = DateTime.Now.TimeOfDay;
@@ -25,6 +33,7 @@ namespace FocusLock.Helper
                 !task.IsCompleted);
         }
 
+        // Returns the next upcoming task that has not yet started and is not completed
         public static async Task<TaskItem> GetNextTaskAsync()
         {
             var now = DateTime.Now.TimeOfDay;

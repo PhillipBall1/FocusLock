@@ -11,43 +11,66 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Dashboard" FontSize="32" FontWeight="Bold" Foreground="#333" Margin="0 0 0 20"/>
+        <TextBlock Text="Dashboard"
+                   FontSize="32"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource TextIconBrush}"
+                   Margin="0 0 0 20"/>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0" Margin="0 0 20 0" VerticalAlignment="Top">
-                <Border Background="#E0E7FF" CornerRadius="16" Padding="20" >
+            <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="0 0 20 0">
+                <Border Background="#D6F0FF" CornerRadius="16" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Today's Summary" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
-                        <TextBlock Text="Focused Time: 1h 45m"/>
-                        <TextBlock Text="Distraction Time: 30m"/>
-                        <TextBlock Text="Tasks Completed: 3 / 5"/>
+                        <TextBlock Text="Total Focus" FontSize="18" FontWeight="Bold" Margin="0 0 10 0" Foreground="{DynamicResource TextIconBrush}"/>
+                        <TextBlock FontSize="14">
+                            <Run Text="🕒 Focus Time: "/>
+                            <Run Text="{Binding User.TotalFocusTime, StringFormat={}{0:%h}h {0:%m}m}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="14">
+                            <Run Text="✅ Tasks Completed: "/>
+                            <Run Text="{Binding User.TasksCompleted}"/>
+                        </TextBlock>
+
                     </StackPanel>
                 </Border>
-
-                <Button Content="Start Focus Mode" Height="50" Background="#BDE0FE" Foreground="#222"
-                        FontSize="16" FontWeight="Bold" BorderThickness="0"/>
+                <Border Background="#E8FFD6" CornerRadius="16" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="{Binding TaskHeader}" FontSize="18" FontWeight="Bold" Margin="0 0 10 0" Foreground="{DynamicResource TextIconBrush}"/>
+                        <TextBlock Text="{Binding UpcomingTaskTitle}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextIconBrush}"/>
+                        <TextBlock Text="{Binding UpcomingTaskStartTime, Converter={StaticResource TimeSpanToAmPmConverter}}" FontSize="14" Foreground="{DynamicResource TextIconBrush}"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Top">
-                <Border Background="#D0F4DE" CornerRadius="16" Padding="20">
-                    <StackPanel>
-                        <TextBlock Text="Upcoming Task" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
-                        <TextBlock Text="Write Capstone Report" FontSize="16"/>
-                        <TextBlock Text="Starts at: 3:00 PM" FontSize="14" Foreground="#666"/>
-                    </StackPanel>
-                </Border>
-
                 <Border Background="#FFD6E0" CornerRadius="16" Padding="20">
                     <StackPanel>
-                        <TextBlock Text="Top Distractions" FontSize="18" FontWeight="SemiBold" Margin="0 0 10 10"/>
-                        <TextBlock Text="• Steam - 15m"/>
-                        <TextBlock Text="• Discord - 10m"/>
-                        <TextBlock Text="• Chrome - 5m"/>
+                        <TextBlock Text="Top Distractions" FontSize="18" FontWeight="Bold" Margin="0 0 10 10" Foreground="{DynamicResource TextIconBrush}"/>
+
+                        <ItemsControl ItemsSource="{Binding TrackedDistractions}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="White" CornerRadius="8" Margin="0 2" Padding="8" BorderBrush="#E0E0E0" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Icon}" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding DisplayName}" VerticalAlignment="Center"
+                                                       FontWeight="Bold" FontSize="16" Foreground="{DynamicResource TextIconBrush}"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding TotalTrackedTime, StringFormat={}{0:hh\\:mm\\:ss}}"
+                                                       VerticalAlignment="Center" FontSize="14" Foreground="{DynamicResource TextIconBrush}" Margin="10,0,0,0" FontWeight="Bold"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
             </StackPanel>

@@ -8,11 +8,20 @@ using System.Windows.Threading;
 
 namespace FocusLock.Controls
 {
+
+    /*
+     * This class is a custom sidebar used to navigate between pages in the FocusLock app. 
+     * It also updates a visual indicator if Focus Mode is active and holds commands for switching 
+     * views like Dashboard, Focus, Tasks, Settings, and Distractions.
+     */
+    // Sidebar user control that supports navigation and live focus mode updates
     public partial class Sidebar : UserControl, INotifyPropertyChanged
     {
-        private DispatcherTimer _timer;
-        private bool _focusActive;
+        private bool _focusActive;      // True if Focus Mode is active    
+        private DispatcherTimer timer; // Timer to keep checking focus mode status
+        public event PropertyChangedEventHandler PropertyChanged; // Required for property change notifications
 
+        // Property that tracks whether Focus Mode is currently active
         public bool FocusActive
         {
             get => _focusActive;
@@ -26,23 +35,27 @@ namespace FocusLock.Controls
             }
         }
 
+        // Constructor: initializes component and starts a timer to poll Focus Mode status
         public Sidebar()
         {
             InitializeComponent();
 
+            // Set initial focus state from service
             FocusActive = FocusService.IsFocusModeActive;
 
-            _timer = new DispatcherTimer
+            // Set up timer to check focus mode status every 100ms
+            timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(100)
             };
-            _timer.Tick += (tick, eventArgs) =>
+            timer.Tick += (tick, eventArgs) =>
             {
                 FocusActive = FocusService.IsFocusModeActive;
             };
-            _timer.Start();
+            timer.Start();
         }
 
+        // Dependency property to track the currently selected page/view name
         public static readonly DependencyProperty CurrentPageNameProperty =
             DependencyProperty.Register("CurrentPageName", typeof(string), typeof(Sidebar), new PropertyMetadata("", OnCurrentPageNameChanged));
 
@@ -52,14 +65,20 @@ namespace FocusLock.Controls
             set => SetValue(CurrentPageNameProperty, value);
         }
 
+        // Notifies the view when the current page changes
         private static void OnCurrentPageNameChanged(DependencyObject bar, DependencyPropertyChangedEventArgs e)
         {
             var sidebar = (Sidebar)bar;
             sidebar.PropertyChanged?.Invoke(sidebar, new PropertyChangedEventArgs(nameof(CurrentPageName)));
         }
 
+        // Commands to switch between different views in the app
+        // Dependency properties for view switch commands (Dashboard, Focus, Tasks, etc.)
+
+        #region Commands
+
         public static readonly DependencyProperty SwitchToDashboardCommandProperty =
-            DependencyProperty.Register("SwitchToDashboardCommand", typeof(ICommand), typeof(Sidebar));
+           DependencyProperty.Register("SwitchToDashboardCommand", typeof(ICommand), typeof(Sidebar));
 
         public ICommand SwitchToDashboardCommand
         {
@@ -102,7 +121,6 @@ namespace FocusLock.Controls
             get => (ICommand)GetValue(SwitchToDistractionsCommandProperty);
             set => SetValue(SwitchToDistractionsCommandProperty, value);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
     }
 }

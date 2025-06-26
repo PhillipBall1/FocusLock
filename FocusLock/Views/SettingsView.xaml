@@ -4,6 +4,6 @@
              Background="#F8F8F8">
 
     <Grid>
-        <TextBlock Text="Settings View" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
+        <TextBlock Text="Coming Soon!" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
     </Grid>
 </UserControl>

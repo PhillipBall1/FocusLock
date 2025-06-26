@@ -10,34 +10,51 @@ using FocusLock.Service;
 
 namespace FocusLock.Models
 {
+    /*
+     * This class represents a distraction app/process being tracked by FocusLock.
+     * It stores info like app name, process IDs, icon, tracking time, and if it’s marked as a distraction.
+     * It supports property change notifications to update the UI when properties change.
+     */
+
     public class Distraction : INotifyPropertyChanged
     {
+        // Displayed app name in UI
         public string? DisplayName { get; set; }
         public string? Description { get; set; }
 
-        // Foreground process
+        // Foreground process info
         public string? ApplicationName { get; set; }
         public string? SurfaceProcessName { get; set; }
         public int SurfaceProcessId { get; set; }
         public string? SurfaceExePath { get; set; }
-        public byte[]? IconBytes { get; set; }
+        public byte[]? IconBytes { get; set; }  // Raw icon data
 
-        // Root/launcher
+        // Root/launcher process info (top of process tree)
         public string? RootProcessName { get; set; }
         public int RootProcessId { get; set; }
         public string? RootExePath { get; set; }
-        public int ProcessTreeDepth { get; set; }
+        public int ProcessTreeDepth { get; set; }  // Depth in process tree
 
-        // Tracking
-        public bool IsOpen { get; private set; }
-        public DateTime? OpenedAt { get; private set; }
-        public TimeSpan TotalTrackedTime { get; private set; }
+        // Tracking state
+        public bool IsOpen { get; private set; }            // Is app currently open/active?
+        public DateTime? OpenedAt { get; private set; }     // When it was last opened
+        [JsonIgnore]
+        public TimeSpan TotalTrackedTime { get; set; }      // Total time tracked as distraction
 
-        #region PropertyChanged
+        // Serialized as string for easier JSON handling
+        [JsonPropertyName("TotalTrackedTime")]
+        public string TotalTrackedTimeString
+        {
+            get => TotalTrackedTime.ToString();
+            set => TotalTrackedTime = TimeSpan.TryParse(value, out var ts) ? ts : TimeSpan.Zero;
+        }
+
+        #region PropertyChanged Implementation
 
         private ImageSource? _icon;
         private bool _isDistraction;
 
+        // Lazily loads ImageSource from icon bytes, not serialized
         [JsonIgnore]
         public ImageSource? Icon
         {
@@ -59,6 +76,7 @@ namespace FocusLock.Models
             }
         }
 
+        // Whether this process is marked as a distraction in the UI
         public bool IsDistraction
         {
             get => _isDistraction;
@@ -76,29 +94,51 @@ namespace FocusLock.Models
 
         #endregion
 
+        // Updates tracking data based on whether the app is currently open
         public void UpdateTracking(bool isCurrentlyOpen)
         {
+            var now = DateTime.Now;
+
             if (isCurrentlyOpen)
             {
                 if (!IsOpen)
                 {
+                    // Started tracking now
                     IsOpen = true;
-                    OpenedAt = DateTime.Now;
+                    OpenedAt = now;
+                }
+                else if (OpenedAt.HasValue)
+                {
+                    // Add elapsed time since last update
+                    var elapsed = now - OpenedAt.Value;
+                    if (elapsed.TotalSeconds > 0)
+                        TotalTrackedTime += elapsed;
+
+                    if (DistractionService.isLogging)
+                        Logger.Log($"[Distraction] Updated tracking for '{DisplayName}' - IsOpen: {IsOpen}, TotalTrackedTime: {TotalTrackedTime}");
+
+                    OpenedAt = now;
                 }
             }
             else
             {
                 if (IsOpen && OpenedAt.HasValue)
                 {
-                    TotalTrackedTime += DateTime.Now - OpenedAt.Value;
-                    OpenedAt = null;
+                    // Finalize tracking for this session
+                    var elapsed = now - OpenedAt.Value;
+                    if (elapsed.TotalSeconds > 0)
+                        TotalTrackedTime += elapsed;
+
+                    if (DistractionService.isLogging)
+                        Logger.Log($"[Distraction] Updated tracking for '{DisplayName}' - IsOpen: {IsOpen}, TotalTrackedTime: {TotalTrackedTime}");
                 }
+
+                OpenedAt = null;
                 IsOpen = false;
             }
-            Logger.Log($"[Distraction] Updated tracking for '{DisplayName}' (PID: {SurfaceProcessId}) - IsOpen: {IsOpen}, TotalTrackedTime: {TotalTrackedTime}");
         }
 
-
+        // Helper to load ImageSource from byte array
         private static ImageSource LoadImage(byte[] bytes)
         {
             using var ms = new MemoryStream(bytes);
@@ -111,6 +151,7 @@ namespace FocusLock.Models
             return image;
         }
 
+        // Attempts to get the icon ImageSource from a running Process
         public static ImageSource? GetIconFromProcess(Process process)
         {
             try
@@ -153,8 +194,10 @@ namespace FocusLock.Models
             }
         }
 
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+        // Attempts to get a friendly app name from the process executable's version info or fallback to process name
         public static string GetAppName(Process process)
         {
             string? exePath = process.MainModule?.FileName;

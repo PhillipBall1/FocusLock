@@ -7,28 +7,41 @@ using System.Windows.Threading;
 
 namespace FocusLock.Service
 {
+    /*
+     * TickService provides a global timer that ticks every 0.1 seconds.
+     * It allows subscribers to register asynchronous callbacks that
+     * will be invoked on each tick.
+     * Useful for regularly polling or updating data without blocking the UI.
+     */
+
     public static class TickService
     {
+        // DispatcherTimer runs on the UI thread and raises Tick events
         private static readonly DispatcherTimer timer = new()
         {
-            Interval = TimeSpan.FromSeconds(0.1)
+            Interval = TimeSpan.FromSeconds(0.1) // Tick every 100 ms
         };
 
+        // List of async subscriber callbacks to invoke on each tick
         private static readonly List<Func<Task>> subscribers = new();
 
+        // Static constructor sets up timer and starts it immediately
         static TickService()
         {
             timer.Tick += async (_, __) =>
             {
+                // Make a copy to avoid modification issues during enumeration
                 foreach (var subscriber in subscribers.ToList())
                 {
                     try
                     {
+                        // Await each subscriber callback asynchronously
                         await subscriber();
                     }
                     catch (Exception ex)
                     {
-                        
+                        // Swallow exceptions to avoid stopping the timer
+                        // You might want to log these in a real app
                     }
                 }
             };
@@ -36,11 +49,19 @@ namespace FocusLock.Service
             timer.Start();
         }
 
+        /*
+         * Registers a subscriber callback to be called on each tick.
+         * Does nothing if the callback is already registered. 
+        */
+         
         public static void Subscribe(Func<Task> callback)
         {
-            if (!subscribers.Contains(callback)) subscribers.Add(callback);
+            if (!subscribers.Contains(callback))
+                subscribers.Add(callback);
         }
 
+        // Unregisters a previously registered subscriber callback.
+        
         public static void Unsubscribe(Func<Task> callback)
         {
             subscribers.Remove(callback);

@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace FocusLock.Service
 {
+    /*
+     * This static helper class provides methods to get process information related to parent-child relationships.
+     * It allows retrieval of a process’s entire subtree (all child processes), a map of process to parent IDs,
+     * and the root process in a process hierarchy.
+     */
+
     public static class ProcessTreeHelper
     {
+        // Struct for process info returned by Windows API
         [StructLayout(LayoutKind.Sequential)]
         private struct PROCESSENTRY32
         {
@@ -20,12 +26,14 @@ namespace FocusLock.Service
             public int th32ParentProcessID;
             public int pcPriClassBase;
             public uint dwFlags;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szExeFile;
         }
 
         private const uint TH32CS_SNAPPROCESS = 0x00000002;
 
+        // Windows API functions for process snapshot and enumeration
         [DllImport("kernel32.dll")]
         private static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
 
@@ -38,6 +46,9 @@ namespace FocusLock.Service
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hObject);
 
+        /// <summary>
+        /// Gets the full list of processes that are descendants of the given parent process ID.
+        /// </summary>
         public static List<Process> GetProcessTree(int parentId)
         {
             var result = new List<Process>();
@@ -56,12 +67,14 @@ namespace FocusLock.Service
             if (!Process32First(snapshot, ref entry))
                 return result;
 
+            // Build map of process ID -> parent process ID
             do
             {
                 pidToParent[entry.th32ProcessID] = entry.th32ParentProcessID;
             }
             while (Process32Next(snapshot, ref entry));
 
+            // BFS traversal to get all descendants
             while (queue.Count > 0)
             {
                 int pid = queue.Dequeue();
@@ -76,8 +89,12 @@ namespace FocusLock.Service
                     var proc = Process.GetProcessById(pid);
                     result.Add(proc);
                 }
-                catch { }
+                catch
+                {
+                    // Process may have exited, ignore exceptions
+                }
 
+                // Enqueue child processes
                 foreach (var kv in pidToParent)
                 {
                     if (kv.Value == pid && !visited.Contains(kv.Key))
@@ -87,6 +104,9 @@ namespace FocusLock.Service
             return result;
         }
 
+        /// <summary>
+        /// Gets a dictionary mapping process IDs to their parent process IDs.
+        /// </summary>
         public static Dictionary<int, int> GetParentPidMap()
         {
             var map = new Dictionary<int, int>();
@@ -115,6 +135,10 @@ namespace FocusLock.Service
             return map;
         }
 
+        /// <summary>
+        /// Returns the root process by walking up the parent chain,
+        /// stopping if it hits the explorer process or a max depth to avoid cycles.
+        /// </summary>
         public static Process GetRootProcess(Process process)
         {
             var parentMap = GetParentPidMap();
@@ -141,29 +165,11 @@ namespace FocusLock.Service
                     }
                 }
             }
-            catch { }
-            return process;
-        }
-
-        public static Process? GetParentProcess(Process process)
-        {
-            var parentMap = GetParentPidMap();
-
-            if (parentMap.TryGetValue(process.Id, out int parentId) && parentId > 4)
+            catch
             {
-                try
-                {
-                    var parent = Process.GetProcessById(parentId);
-                    if(parent.ProcessName == "explorer") return process;
-                    return parent;
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log($"[ProcessTreeHelper] GetParentProcess failed: {ex.Message}");
-                }
+                // Ignore exceptions
             }
             return process;
         }
-
     }
 }
