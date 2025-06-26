@@ -4,13 +4,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-
-/*
- * This static helper class retrieves the icon image for a given file name.
- * It uses Windows Shell API to get the system icon for the file type and converts it
- * into a BitmapSource that can be used in WPF UI elements.
- */
-
 public static class IconHelper
 {
     // Import shell32.dll function to get file info including icon handle

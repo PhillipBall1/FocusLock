@@ -4,11 +4,6 @@ using System.Windows;
 
 namespace FocusLock.Controls
 {
-    /*
-     * This class is a custom header to replace Windows' default title bar. 
-     * It adds support for dragging the window and buttons to minimize, maximize, or close the app, 
-     * all styled to match FocusLock’s design.
-     */
     // Partial class for the custom Header user control
     public partial class Header : UserControl
     {

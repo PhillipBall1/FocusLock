@@ -3,12 +3,6 @@ using System.IO;
 
 namespace FocusLock.Service
 {
-    /*
-     * This static Logger class writes timestamped log messages to a text file.
-     * It creates a new log file each time the app runs, stored in a "Logs" folder.
-     * Useful for tracking app events and errors.
-     */
-
     public static class Logger
     {
         private static string logDirectory;  // Folder to store logs

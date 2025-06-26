@@ -5,11 +5,6 @@ using System.Windows.Media;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts a boolean value into a SolidColorBrush, 
-     * allowing UI elements to change background color based on a true/false state. 
-     * It's used in data binding to highlight something visually when a condition is true.
-     */
     // Converts a boolean value to a SolidColorBrush (used in XAML for styling)
     public class BoolToColorConverter : IValueConverter
     {

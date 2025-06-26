@@ -7,12 +7,6 @@ using System.Windows.Threading;
 
 namespace FocusLock.Service
 {
-    /*
-     * TickService provides a global timer that ticks every 0.1 seconds.
-     * It allows subscribers to register asynchronous callbacks that
-     * will be invoked on each tick.
-     * Useful for regularly polling or updating data without blocking the UI.
-     */
 
     public static class TickService
     {
@@ -49,11 +43,8 @@ namespace FocusLock.Service
             timer.Start();
         }
 
-        /*
-         * Registers a subscriber callback to be called on each tick.
-         * Does nothing if the callback is already registered. 
-        */
-         
+
+        // Registers a subscriber callback to be called on each tick
         public static void Subscribe(Func<Task> callback)
         {
             if (!subscribers.Contains(callback))

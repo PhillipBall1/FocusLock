@@ -5,12 +5,6 @@ using System.Windows.Media;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts a boolean value into a border color brush.
-     * It returns red when focus mode is active, and blue when it’s not.
-     * Useful for highlighting parts of the UI based on focus state.
-     */
-
     // Converts a boolean (focus mode state) into a colored border brush
     public class FocusActiveToBorderColorConverter : IValueConverter
     {

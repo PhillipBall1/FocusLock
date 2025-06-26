@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 namespace FocusLock.Models
 {
-    /*
-     * This class represents a single task in the FocusLock app.
-     * It contains properties for the task's ID, title, start time, duration, recurrence, and completion status.
-     * It also has a method to update the completion status based on the current time.
-     */
-
     public class TaskItem
     {
         // Unique identifier for the task

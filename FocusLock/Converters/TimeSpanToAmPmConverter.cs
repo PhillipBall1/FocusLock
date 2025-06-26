@@ -4,12 +4,6 @@ using System.Windows.Data;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts a TimeSpan value into a formatted 12-hour time string with AM/PM.
-     * For example, a TimeSpan of 14:30 becomes "2:30 PM".
-     * Useful for displaying times in a user-friendly way.
-     */
-
     // Converts a TimeSpan to a 12-hour clock time string (e.g., "2:30 PM")
     public class TimeSpanToAmPmConverter : IValueConverter
     {

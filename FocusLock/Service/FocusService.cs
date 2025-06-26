@@ -9,14 +9,6 @@ using System.Threading.Tasks;
 
 namespace FocusLock.Service
 {
-    /*
-     * This service manages the focus mode functionality.
-     * It tracks whether focus mode is active, records total focus time,
-     * subscribes to periodic ticks to scan for distraction processes,
-     * and attempts to gracefully close or force-kill distraction apps.
-     * Focus time is persisted to a file and can be retrieved asynchronously.
-     */
-
     public static class FocusService
     {
         private static List<Distraction> distractions;

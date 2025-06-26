@@ -10,12 +10,6 @@ using FocusLock.Service;
 
 namespace FocusLock.Models
 {
-    /*
-     * This class represents a distraction app/process being tracked by FocusLock.
-     * It stores info like app name, process IDs, icon, tracking time, and if it’s marked as a distraction.
-     * It supports property change notifications to update the UI when properties change.
-     */
-
     public class Distraction : INotifyPropertyChanged
     {
         // Displayed app name in UI

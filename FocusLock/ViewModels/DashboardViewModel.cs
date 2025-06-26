@@ -11,12 +11,6 @@ using System.Windows.Media;
 
 namespace FocusLock.ViewModels
 {
-    /*
-     * DashboardViewModel manages the data and state for the app's dashboard view.
-     * It tracks distractions, user stats, and task info, and updates the UI accordingly.
-     * Implements INotifyPropertyChanged to notify UI about property changes.
-     * Uses async methods to load and refresh data from services.
-     */
     public class DashboardViewModel : BaseViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

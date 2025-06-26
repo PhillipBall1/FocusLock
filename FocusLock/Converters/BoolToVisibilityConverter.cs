@@ -5,13 +5,7 @@ using System.Windows.Data;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class is used to convert a boolean value into a WPF Visibility value. 
-     * It makes it easy to show or hide UI elements in XAML based on a condition 
-     * (e.g., true = visible, false = collapsed).
-     */
-
-    // Converts a boolean to Visibility (true = Visible, false = Collapsed)
+    // Converts a boolean to Visibility
     public class BoolToVisibilityConverter : IValueConverter
     {
         // Converts a bool to Visibility

@@ -5,12 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace FocusLock.Service
 {
-    /*
-     * This static helper class provides methods to get process information related to parent-child relationships.
-     * It allows retrieval of a process’s entire subtree (all child processes), a map of process to parent IDs,
-     * and the root process in a process hierarchy.
-     */
-
     public static class ProcessTreeHelper
     {
         // Struct for process info returned by Windows API
@@ -46,9 +40,7 @@ namespace FocusLock.Service
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hObject);
 
-        /// <summary>
-        /// Gets the full list of processes that are descendants of the given parent process ID.
-        /// </summary>
+        // Gets the full list of processes that are descendants of the given parent process ID.
         public static List<Process> GetProcessTree(int parentId)
         {
             var result = new List<Process>();
@@ -104,9 +96,7 @@ namespace FocusLock.Service
             return result;
         }
 
-        /// <summary>
-        /// Gets a dictionary mapping process IDs to their parent process IDs.
-        /// </summary>
+        // Gets a dictionary mapping process IDs to their parent process IDs.
         public static Dictionary<int, int> GetParentPidMap()
         {
             var map = new Dictionary<int, int>();
@@ -135,10 +125,8 @@ namespace FocusLock.Service
             return map;
         }
 
-        /// <summary>
-        /// Returns the root process by walking up the parent chain,
-        /// stopping if it hits the explorer process or a max depth to avoid cycles.
-        /// </summary>
+        // Returns the root process by walking up the parent chain,
+        // stopping if it hits the explorer process or a max depth to avoid cycles.
         public static Process GetRootProcess(Process process)
         {
             var parentMap = GetParentPidMap();

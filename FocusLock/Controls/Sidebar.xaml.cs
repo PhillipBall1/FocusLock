@@ -8,12 +8,6 @@ using System.Windows.Threading;
 
 namespace FocusLock.Controls
 {
-
-    /*
-     * This class is a custom sidebar used to navigate between pages in the FocusLock app. 
-     * It also updates a visual indicator if Focus Mode is active and holds commands for switching 
-     * views like Dashboard, Focus, Tasks, Settings, and Distractions.
-     */
     // Sidebar user control that supports navigation and live focus mode updates
     public partial class Sidebar : UserControl, INotifyPropertyChanged
     {

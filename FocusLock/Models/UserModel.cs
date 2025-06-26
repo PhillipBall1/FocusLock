@@ -3,12 +3,6 @@ using System.Collections.ObjectModel;
 
 namespace FocusLock.Models
 {
-    /*
-     * This class represents the user's overall profile and statistics.
-     * It tracks the user’s name, total focus and distraction times,
-     * number of tasks created and completed, and a list of tracked distractions.
-     */
-
     public class UserModel
     {
         // User's display name

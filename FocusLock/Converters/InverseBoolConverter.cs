@@ -4,11 +4,6 @@ using System.Windows.Data;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class inverts a boolean value. 
-     * Useful in XAML when you need the opposite of a bool property, such as disabling a button when a value is true.
-     */
-
     // Converts a boolean to its inverse (true → false, false → true)
     public class InverseBoolConverter : IValueConverter
     {

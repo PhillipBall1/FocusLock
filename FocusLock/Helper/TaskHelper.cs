@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace FocusLock.Helper
 {
-    /*
-     * This static helper class provides async methods to get all tasks,
-     * find the currently active task based on time and completion,
-     * and find the next upcoming task that hasn’t been completed.
-     */
-
     public static class TaskHelper
     {
         // Loads all tasks asynchronously from the TaskService

@@ -2,13 +2,6 @@
 
 namespace FocusLock.ViewModels
 {
-    /*
-     * BaseViewModel implements INotifyPropertyChanged to provide
-     * property change notification support for data binding in WPF.
-     * ViewModels that inherit from this class can easily notify the UI
-     * when a property value changes.
-     */
-
     public class BaseViewModel : INotifyPropertyChanged
     {
         // Event raised when a property value changes

@@ -4,12 +4,6 @@ using System.Windows.Data;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts two boolean values — focus mode status and task running status —
-     * into a button label string. It shows different text based on whether a task is active,
-     * focus mode is on, or neither.
-     */
-
     // Converts focus/task state into a string label for the focus button
     public class FocusStateToTextConverter : IMultiValueConverter
     {

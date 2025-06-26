@@ -4,12 +4,6 @@ using System.Windows.Data;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts a TimeSpan into a human-readable string showing hours and minutes.
-     * For example, a TimeSpan of 90 minutes becomes "1 Hour 30 Minutes".
-     * Useful for displaying durations in the UI in a friendly format.
-     */
-
     // Converts a TimeSpan into a formatted string with hours and minutes
     public class MinutesToStringConverter : IValueConverter
     {

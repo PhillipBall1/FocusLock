@@ -11,13 +11,6 @@ using System.Windows.Media.Imaging;
 
 namespace FocusLock.Service
 {
-    /*
-     * This service manages tracking and persistence of distraction applications.
-     * It detects running distraction processes, tracks their usage time, updates their state,
-     * and saves/loads this data to/from a JSON file.
-     * It also provides helper methods to get icons and process hierarchy info for distractions.
-     */
-
     public static class DistractionService
     {
         private static List<Distraction> trackedDistractions = new();

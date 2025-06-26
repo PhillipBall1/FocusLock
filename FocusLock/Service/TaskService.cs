@@ -8,11 +8,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-/*
- * Static service for managing task items: loading, saving, updating,
- * and tracking the currently active and next upcoming tasks.
- * Also interacts with FocusService to start/stop focus mode accordingly.
-*/ 
 public static class TaskService
 {
     // Events to notify UI or other parts when active or next tasks change or tasks update
@@ -29,11 +24,8 @@ public static class TaskService
     // Gets the next upcoming task, or null if none.
     public static TaskItem? NextTask => _currentNextTask;
 
-    /* 
-     * Loads all tasks, updates their completion status, determines
-     * active and next tasks based on current time, triggers related events,
-     * and starts/stops FocusService as needed.
-    */
+
+    // Loads all tasks and keeps them updated based on current time.
     public static async Task UpdateAsync()
     {
         var now = DateTime.Now.TimeOfDay;

@@ -5,12 +5,6 @@ using System.Windows.Media;
 
 namespace FocusLock.Converters
 {
-    /*
-     * This class converts two boolean values — focus mode status and task running status —
-     * into a background color. If a task is running or focus mode is active, it returns
-     * a red-tinted color. Otherwise, it returns a blue-tinted background.
-     */
-
     // Converts focus state and task state into a background brush
     public class FocusStateToBackgroundConverter : IMultiValueConverter
     {
