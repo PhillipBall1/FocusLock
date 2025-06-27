@@ -1,5 +1,4 @@
-﻿using FocusLock.Helper;
-using FocusLock.Service;
+﻿using FocusLock.Service;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
