@@ -24,7 +24,6 @@ namespace FocusLock.Service
         {
             timer.Tick += async (_, __) =>
             {
-                // Make a copy to avoid modification issues during enumeration
                 foreach (var subscriber in subscribers.ToList())
                 {
                     try
@@ -34,8 +33,7 @@ namespace FocusLock.Service
                     }
                     catch (Exception ex)
                     {
-                        // Swallow exceptions to avoid stopping the timer
-                        // You might want to log these in a real app
+
                     }
                 }
             };

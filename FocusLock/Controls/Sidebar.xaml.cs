@@ -34,9 +34,6 @@ namespace FocusLock.Controls
         {
             InitializeComponent();
 
-            // Set initial focus state from service
-            FocusActive = FocusService.IsFocusModeActive;
-
             // Set up timer to check focus mode status every 100ms
             timer = new DispatcherTimer
             {

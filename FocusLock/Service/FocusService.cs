@@ -131,22 +131,37 @@ namespace FocusLock.Service
                     var processesToKill = new List<Process>();
                     Logger.Log($"[FocusService] Checking distraction: {distraction.DisplayName}");
 
-                    // Gather root process tree for killing
-                    if (distraction.RootProcessId > 0)
+                    // 1. Kill dynamic matches by process name
+                    if (!string.IsNullOrWhiteSpace(distraction.ApplicationName))
+                    {
+                        var matchingProcs = Process.GetProcessesByName(distraction.ApplicationName);
+                        foreach (var proc in matchingProcs)
+                        {
+                            if (!proc.HasExited && !killedPids.Contains(proc.Id))
+                            {
+                                processesToKill.Add(proc);
+                                Logger.Log($"[FocusService] Matched by Name: {distraction.ApplicationName} (PID {proc.Id})");
+                            }
+                        }
+                    }
+
+                    // 2. Still support explicit RootProcessId tree
+                    if (distraction.RootProcessId > 0 && !killedPids.Contains(distraction.RootProcessId))
                     {
                         try
                         {
                             var root = Process.GetProcessById(distraction.RootProcessId);
                             if (!root.HasExited)
                             {
-                                processesToKill.AddRange(ProcessTreeHelper.GetProcessTree(root.Id));
+                                var tree = ProcessTreeHelper.GetProcessTree(root.Id);
+                                processesToKill.AddRange(tree.Where(p => !killedPids.Contains(p.Id)));
                                 Logger.Log($"[FocusService] Deleting by Root: {distraction.DisplayName}");
                             }
                         }
                         catch { }
                     }
 
-                    // Also add surface process if different from root and not already handled
+                    // 3. Still support SurfaceProcessId
                     if (distraction.SurfaceProcessId > 0 &&
                         distraction.SurfaceProcessId != distraction.RootProcessId &&
                         !killedPids.Contains(distraction.SurfaceProcessId))
@@ -163,15 +178,15 @@ namespace FocusLock.Service
                         catch { }
                     }
 
-                    // Attempt to close or kill each gathered process
-                    foreach (var proc in processesToKill)
+                    // 4. Terminate all matched processes
+                    foreach (var proc in processesToKill.DistinctBy(p => p.Id))
                     {
                         if (killedPids.Contains(proc.Id))
                             continue;
 
                         Logger.Log($"[FocusService] Handling process: {proc.ProcessName} ({proc.Id})");
 
-                        // Send WM_CLOSE to allow graceful shutdown
+                        // Attempt graceful shutdown
                         if (proc.MainWindowHandle != IntPtr.Zero)
                         {
                             PostMessage(proc.MainWindowHandle, 0x0010, IntPtr.Zero, IntPtr.Zero);
@@ -181,7 +196,7 @@ namespace FocusLock.Service
                         await Task.Delay(250);
                         proc.Refresh();
 
-                        // If still running, force kill
+                        // Force kill if needed
                         if (!proc.HasExited)
                         {
                             proc.Kill();
@@ -197,6 +212,7 @@ namespace FocusLock.Service
                 }
             }
         }
+
         #endregion
     }
 }
