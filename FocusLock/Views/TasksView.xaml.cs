@@ -12,8 +12,6 @@ namespace FocusLock.Views
 {
     public partial class TasksView : UserControl
     {
-        // Holds the list of tasks loaded and managed in this view
-        private List<TaskItem> taskItems = new();
 
         public TasksView()
         {
@@ -24,8 +22,8 @@ namespace FocusLock.Views
         // Load tasks when the view is loaded
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            taskItems = await TaskService.LoadTasksAsync();
-            TasksListView.ItemsSource = taskItems;
+            await TaskService.LoadTasksAsync();
+            TasksListView.ItemsSource = TaskService.CurrentTasks;
         }
 
         // Called when user clicks the Add Task button
@@ -96,9 +94,9 @@ namespace FocusLock.Views
             };
 
             // Add the new task to list, refresh UI, and save
-            taskItems.Add(newTask);
+            TaskService.CurrentTasks.Add(newTask);
+            TasksListView.ItemsSource = TaskService.CurrentTasks;
             TasksListView.Items.Refresh();
-            await TaskService.SaveTasksAsync(taskItems);
 
             // Clear input fields
             TitleTextBox.Text = "";
@@ -116,9 +114,9 @@ namespace FocusLock.Views
             // Remove selected task from list, refresh UI, and save
             if (sender is Button button && button.Tag is TaskItem task)
             {
-                taskItems.Remove(task);
+                TaskService.CurrentTasks.Remove(task);
+                TasksListView.ItemsSource = TaskService.CurrentTasks;
                 TasksListView.Items.Refresh();
-                await TaskService.SaveTasksAsync(taskItems);
             }
         }
     }

@@ -23,8 +23,8 @@ namespace FocusLock.Views
         // Load active and stored distractions, merge them, and update the UI list
         private async void LoadDistractionsAsync()
         {
-            var active = DistractionService.GetActiveProcesses(); // Current running distractions
             var stored = await DistractionService.LoadDistractionsAsync(); // Previously saved distractions
+            var active = DistractionService.GetActiveProcesses(); // Current running distractions
 
             // Merge stored distractions with newly active ones that are not in stored list yet
             var merged = stored.Concat(

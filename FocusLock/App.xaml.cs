@@ -1,5 +1,6 @@
 ﻿using FocusLock.Service;
 using FocusLock.ViewModels;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -31,6 +32,15 @@ namespace FocusLock
 
             // Load distractions data from storage
             await DistractionService.InitializeAsync();
+
+            // Load User Settings
+            SettingsService.LoadSettings();
+
+            // Set Tasks information
+            TaskService.CurrentTasks.CollectionChanged += async (s, e) =>
+            {
+                await TaskService.SaveTasksAsync();
+            };
         }
     }
 }

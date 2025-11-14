@@ -81,8 +81,8 @@ namespace FocusLock.ViewModels
 
         // Header color changes based on task running state (red if active, blue if upcoming)
         public Brush TaskHeaderColor => IsTaskRunning
-            ? new SolidColorBrush(Color.FromRgb(198, 40, 40))  // Red-ish
-            : new SolidColorBrush(Color.FromRgb(21, 101, 192)); // Blue-ish
+            ? new SolidColorBrush(Color.FromRgb(198, 40, 40))  // Red
+            : new SolidColorBrush(Color.FromRgb(21, 101, 192)); // Blue
 
         // Synchronize properties with the current tasks from TaskService
         private void SyncFromTaskService()

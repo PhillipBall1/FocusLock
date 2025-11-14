@@ -12,7 +12,7 @@ namespace FocusLock
         public MainWindow()
         {
             InitializeComponent();
-            Application.Current.Resources["TextIconBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#556070"));
+            //Application.Current.Resources["TextIconBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#556070"));
             DataContext = new MainViewModel();
             ShowMainApp();
             /*

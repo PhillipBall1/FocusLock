@@ -9,7 +9,7 @@
         AllowsTransparency="True"
         Background="Transparent">
 
-    <Border BorderBrush="#FFFF" BorderThickness="3" CornerRadius="10" Background="Transparent">
+    <Border BorderBrush="{DynamicResource SubBackgroundBrush}" BorderThickness="3" CornerRadius="10" Background="Transparent">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -37,7 +37,7 @@
                     SwitchToTasksCommand="{Binding SwitchToTasksCommand}" 
                     CurrentPageName="{Binding CurrentPageName, Mode=OneWay}"
                     />
-                <Grid Grid.Column="1" Background="#F8F8F8">
+                <Grid Grid.Column="1" Background="{DynamicResource BackgroundBrush}" >
                     <ContentControl Content="{Binding CurrentPage}" />
                 </Grid>
             </Grid>

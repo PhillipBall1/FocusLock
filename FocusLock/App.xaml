@@ -13,11 +13,15 @@
         <converter:FocusStateToBackgroundConverter x:Key="FocusStateToBackgroundConverter"/>
         <converter:FocusStateToTextConverter x:Key="FocusStateToTextConverter"/>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter"/>
-        
-        <SolidColorBrush x:Key="PastelDarkBlueBrush" Color="#FF6B8EAD"/>
-        <SolidColorBrush x:Key="PastelRedBrush" Color="#FFCDD2"/>
-        <SolidColorBrush x:Key="PastelDarkRedBrush" Color="#C62828" />
-        <SolidColorBrush x:Key="TextIconBrush" Color="Black" />
+
+        <SolidColorBrush x:Key="PastelDarkBlueBrush"    Color="#FF6B8EAD"/>
+        <SolidColorBrush x:Key="PastelBlueBrush"        Color="#E3F2FD"/>
+        <SolidColorBrush x:Key="PastelDarkRedBrush"     Color="#C62828" />
+        <SolidColorBrush x:Key="PastelRedBrush"         Color="#FFCDD2"/>
+        <SolidColorBrush x:Key="TextIconBrush"          Color="#556070" />
+        <SolidColorBrush x:Key="BackgroundBrush"        Color="#F8F8F8" />
+        <SolidColorBrush x:Key="SubBackgroundBrush"     Color="#FFFFFF" />
+        <SolidColorBrush x:Key="BorderBrush"            Color="#666666" />
 
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
             <Setter Property="Template">

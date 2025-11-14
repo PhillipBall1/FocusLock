@@ -1,9 +1,36 @@
 ﻿<UserControl x:Class="FocusLock.Views.SettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="#F8F8F8">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Grid>
-        <TextBlock Text="Coming Soon!" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="30,40">
+            <TextBlock Text="Settings"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource TextIconBrush}"
+                       Margin="0,0,0,20"/>
+
+            <!-- Notifications -->
+            <Border CornerRadius="12"
+                    Background="{DynamicResource SubBackgroundBrush}"
+                    Padding="15"
+                    Margin="0,0,0,12">
+                <CheckBox Content="Show Notifications"
+                          IsChecked="{Binding ShowNotifications, Mode=TwoWay}"
+                          FontSize="12"
+                          Foreground="{DynamicResource TextIconBrush}"/>
+            </Border>
+
+            <!-- Dark Mode -->
+            <Border CornerRadius="12"
+                    Background="{DynamicResource SubBackgroundBrush}"
+                    Padding="15"
+                    Margin="0,0,0,12">
+                <CheckBox Content="Enable Dark Mode"
+                          IsChecked="{Binding IsDarkMode, Mode=TwoWay}"
+                          FontSize="12"
+                          Foreground="{DynamicResource TextIconBrush}"/>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

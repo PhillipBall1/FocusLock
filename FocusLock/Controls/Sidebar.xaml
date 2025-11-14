@@ -10,8 +10,8 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
-        <Border BorderBrush="#FFFF" BorderThickness="1" CornerRadius="0" Background="#D9F8F1">
-            <StackPanel Background="#FFFF" Grid.Column="0">
+        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0" CornerRadius="0" Background="{DynamicResource SubBackgroundBrush}">
+            <StackPanel Background="{DynamicResource SubBackgroundBrush}" Grid.Column="0">
                 <Button Command="{Binding SwitchToDashboardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

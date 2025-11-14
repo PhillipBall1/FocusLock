@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace FocusLock.Service
@@ -134,30 +135,45 @@ namespace FocusLock.Service
             const int MaxDepth = 10;
             int depth = 0;
 
+            while (parentMap.TryGetValue(process.Id, out int parentId) && parentId > 4 && depth < MaxDepth)
+            {
+                Process? parent = null;
+
+                try
+                {
+                    if (!IsProcessRunning(parentId))
+                        break;
+
+                    parent = Process.GetProcessById(parentId);
+
+                    if (parent == null || parent.HasExited || parent.ProcessName == "explorer")
+                        break;
+
+                    process = parent;
+                    depth++;
+                }
+                catch
+                {
+                    break;
+                }
+            }
+
+            return process;
+        }
+
+        // Lightweight check to verify if the process ID is still active.
+        private static bool IsProcessRunning(int processId)
+        {
             try
             {
-                while (parentMap.TryGetValue(process.Id, out int parentId) && parentId > 4 && depth < MaxDepth)
-                {
-                    try
-                    {
-                        Process parent = Process.GetProcessById(parentId);
-
-                        if (parent == null || parent.ProcessName == "explorer") break;
-
-                        process = parent;
-                        depth++;
-                    }
-                    catch
-                    {
-                        break;
-                    }
-                }
+                Process.GetProcessById(processId);
+                return true;
             }
             catch
             {
-                // Ignore exceptions
+                return false;
             }
-            return process;
         }
+
     }
 }

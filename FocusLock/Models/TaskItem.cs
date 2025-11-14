@@ -25,15 +25,7 @@ namespace FocusLock.Models
 
         // Whether the task has been completed
         public bool IsCompleted { get; set; } = false;
-
-        // Updates IsCompleted if the current time is past the task's end time
-        public void CheckCompletionStatus()
-        {
-            var now = DateTime.Now.TimeOfDay;
-            if (now >= StartTime + Duration)
-            {
-                IsCompleted = true;
-            }
-        }
+        // Checks to make sure the Task onl notifies once
+        public bool HasNotified { get; set; } = false;
     }
 }

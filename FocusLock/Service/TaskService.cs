@@ -1,11 +1,15 @@
-﻿using FocusLock.Models;
+﻿using FocusLock.Helper;
+using FocusLock.Models;
 using FocusLock.Service;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms.PropertyGridInternal;
 
 public static class TaskService
 {
@@ -17,33 +21,83 @@ public static class TaskService
     private static TaskItem? _currentActiveTask;
     private static TaskItem? _currentNextTask;
 
-    // Gets the currently active task, or null if none is active.
     public static TaskItem? ActiveTask => _currentActiveTask;
-
-    // Gets the next upcoming task, or null if none.
     public static TaskItem? NextTask => _currentNextTask;
 
+    // Persistent task list that the UI binds to
+    public static ObservableCollection<TaskItem> CurrentTasks { get; } = new();
 
-    // Loads all tasks and keeps them updated based on current time.
+    private static readonly string SavePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "FocusLock", "tasks.json");
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented = true
+    };
+
+    // Update all task states and perform background actions
     public static async Task UpdateAsync()
     {
         var now = DateTime.Now.TimeOfDay;
-        var tasks = await LoadTasksAsync();
+        var tasks = CurrentTasks.ToList();
+        var toRemove = new List<TaskItem>();
+        bool modified = false;
 
-        // Update completion status on all tasks
         foreach (var task in tasks)
         {
-            task.CheckCompletionStatus();
+            var wasCompleted = task.IsCompleted;
+
+            // Check if completed
+            if (now >= task.StartTime + task.Duration && task.HasNotified)
+            {
+                task.IsCompleted = true;
+                task.HasNotified = false;
+                await SaveTasksAsync();
+            }
+
+            // Remove if completed and not recurring
+            if (task.IsCompleted && !task.IsRecurring)
+            {
+                toRemove.Add(task);
+                modified = true;
+            }
+
+            // Reset recurring tasks for the next day
+            if (task.IsCompleted && task.IsRecurring)
+            {
+                if(now < task.StartTime)
+                {
+                    task.IsCompleted = false;
+                    await SaveTasksAsync();
+                }
+            }
+
+            if (!FocusLock.Properties.Settings.Default.ShowNotifications) continue;
+
+            // Notify user if 20 minutes before task
+            TimeSpan notifyTime = task.StartTime - TimeSpan.FromMinutes(20);
+            if (now >= notifyTime && now < task.StartTime && !task.HasNotified)
+            {
+                task.HasNotified = true;
+                modified = true;
+                NotificationHelper.ShowNotification(
+                    "Upcoming Task",
+                    $"{task.Title} starts in {(int)(task.StartTime - now).TotalMinutes} minutes."
+                );
+            }
         }
 
-        // Determine the currently active task based on time and completion
-        var active = tasks.FirstOrDefault(task => !task.IsCompleted && now >= task.StartTime && now < task.StartTime + task.Duration);
+        // Remove completed tasks
+        foreach (var task in toRemove) CurrentTasks.Remove(task);
+
+        // Get the active task, if exists, start focus
+        var active = tasks.FirstOrDefault(t => !t.IsCompleted && now >= t.StartTime && now < t.StartTime + t.Duration);
         if (_currentActiveTask?.ID != active?.ID)
         {
             _currentActiveTask = active;
             ActiveTaskChanged?.Invoke(_currentActiveTask);
 
-            // Start or stop focus mode depending on active task presence
             if (_currentActiveTask != null)
                 await FocusService.StartAsync();
             else
@@ -52,9 +106,9 @@ public static class TaskService
             TasksUpdated?.Invoke();
         }
 
-        // Determine the next upcoming task after the current time
+        // Get then next task
         var next = tasks
-            .Where(task => !task.IsCompleted && now < task.StartTime)
+            .Where(t => !t.IsCompleted && now < t.StartTime)
             .OrderBy(t => t.StartTime)
             .FirstOrDefault();
 
@@ -63,55 +117,17 @@ public static class TaskService
             _currentNextTask = next;
             NextTaskChanged?.Invoke(_currentNextTask);
         }
+
+        if (modified || toRemove.Count > 0)
+            await SaveTasksAsync();
     }
 
-    // Returns the count of tasks marked as completed.
-    public static async Task<int> GetCompletedCountAsync()
-    {
-        var tasks = await LoadTasksAsync();
-        return tasks.Count(t => t.IsCompleted);
-    }
+    public static int GetCompletedCount() => CurrentTasks.Count(t => t.IsCompleted);
+    public static int GetCreatedCount() => CurrentTasks.Count;
 
-    // Returns the total count of tasks created.
-    public static async Task<int> GetCreatedCountAsync()
-    {
-        var tasks = await LoadTasksAsync();
-        return tasks.Count;
-    }
+    #region Save / Load
 
-    #region Save/Load
-
-    // File path for persisting tasks in app data folder
-    private static readonly string SavePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FocusLock", "tasks.json");
-
-    // JSON serialization options for pretty formatting
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        WriteIndented = true
-    };
-
-    // Loads the task list from the JSON file asynchronously.
-    // Returns an empty list if file is missing or on error.
-    public static async Task<List<TaskItem>> LoadTasksAsync()
-    {
-        try
-        {
-            if (!File.Exists(SavePath))
-                return new List<TaskItem>();
-
-            string json = await File.ReadAllTextAsync(SavePath);
-            return JsonSerializer.Deserialize<List<TaskItem>>(json, JsonOptions) ?? new List<TaskItem>();
-        }
-        catch
-        {
-            return new List<TaskItem>();
-        }
-    }
-
-    // Saves the provided list of tasks to the JSON file asynchronously.
-    // Logs errors but does not throw exceptions.
-    public static async Task SaveTasksAsync(List<TaskItem> tasks)
+    public static async Task LoadTasksAsync()
     {
         try
         {
@@ -119,7 +135,39 @@ public static class TaskService
             if (dir is not null)
                 Directory.CreateDirectory(dir);
 
-            string json = JsonSerializer.Serialize(tasks, JsonOptions);
+            if (!File.Exists(SavePath))
+            {
+                CurrentTasks.Clear();
+                return;
+            }
+
+            string json = await File.ReadAllTextAsync(SavePath);
+            var loaded = JsonSerializer.Deserialize<List<TaskItem>>(json, JsonOptions) ?? new List<TaskItem>();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CurrentTasks.Clear();
+                foreach (var task in loaded)
+                    CurrentTasks.Add(task);
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.Log($"[TaskService] Failed to load tasks: {ex.Message}");
+            CurrentTasks.Clear();
+        }
+    }
+
+    public static async Task SaveTasksAsync()
+    {
+        try
+        {
+            var dir = Path.GetDirectoryName(SavePath);
+            if (dir is not null)
+                Directory.CreateDirectory(dir);
+            var snapshot = CurrentTasks.ToList();
+            string json = JsonSerializer.Serialize(snapshot, JsonOptions);
+
             await File.WriteAllTextAsync(SavePath, json);
         }
         catch (Exception ex)
@@ -128,5 +176,5 @@ public static class TaskService
         }
     }
 
-    #endregion 
+    #endregion
 }

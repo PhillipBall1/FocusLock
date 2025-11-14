@@ -49,7 +49,9 @@ namespace FocusLock.Service
                         }
                     }
                 }
-                catch { }
+                catch (Exception e)
+                {
+                }
 
                 // If not found, check surface process
                 try
@@ -115,12 +117,12 @@ namespace FocusLock.Service
                     if (string.IsNullOrEmpty(surfaceProcess.MainWindowTitle) || surfaceProcess.MainWindowHandle == IntPtr.Zero)
                         continue;
 
-                    var rootProcess = ProcessTreeHelper.GetRootProcess(surfaceProcess);
+                    Process rootProcess = ProcessTreeHelper.GetRootProcess(surfaceProcess);
 
                     if (seenRootProcessIds.Contains(rootProcess.Id))
                         continue;
 
-                    var exePath = rootProcess.MainModule?.FileName;
+                    string exePath = rootProcess.MainModule?.FileName;
                     if (!string.IsNullOrEmpty(exePath) && exePath.StartsWith(Environment.SystemDirectory, StringComparison.OrdinalIgnoreCase))
                         continue;
 
@@ -186,6 +188,26 @@ namespace FocusLock.Service
                 return "";
             }
         }
+
+        // Attempts to safely retrieve a process by ID
+        private static bool TryGetProcessById(int id, out Process? process, bool logOnFail = false)
+        {
+            process = null;
+            if (id <= 0) return false;
+
+            try
+            {
+                process = Process.GetProcessById(id);
+                return !process.HasExited;
+            }
+            catch (Exception ex)
+            {
+                if (logOnFail)
+                    Logger.Log($"[DistractionService] Failed to get process {id}: {ex.Message}");
+                return false;
+            }
+        }
+
 
         // Calculates the depth of the surface process in the process tree relative to root
         private static int GetProcessDepth(Process surface, Process root)
