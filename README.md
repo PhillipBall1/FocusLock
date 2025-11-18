@@ -31,3 +31,6 @@ Process tracking only does two things:
 
 ### Contributions
 This project was created as a capstone for my college graduation. Any feedback or suggestions would be great, but further work on this project is still to be determined.
+
+### Video Demonstration
+https://www.youtube.com/watch?v=Lc_HxzrRQO4
